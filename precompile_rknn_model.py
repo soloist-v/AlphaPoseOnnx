@@ -39,7 +39,7 @@ def load_model(model_path, npu_id):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', "--rknn", type=str, default='', help='weights path')  # from yolov5/models/
-    parser.add_argument('-o', "--output", type=str, default='', help='保存name')
+    parser.add_argument('-o', "--outputs", type=str, default='', help='保存name')
 
     opt = parser.parse_args()
     orig_rknn = opt.rknn

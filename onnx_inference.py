@@ -26,7 +26,7 @@ def flip_heatmap(heatmap: "ndarray", shift=False):
         Heatmap of joints.
         List of joint pairs.
     shift : bool
-        Whether to shift the output.
+        Whether to shift the outputs.
     Returns
     -------
     numpy.ndarray
@@ -115,8 +115,6 @@ def _transform(src_img, bbox, input_size=(256, 192), aspect_ratio=192 / 256):
     trans = get_affine_transform(center, scale, 0, [inp_w, inp_h])
     img = cv2.warpAffine(src_img, trans, (int(inp_w), int(inp_h)), flags=cv2.INTER_LINEAR)
     bbox = _center_scale_to_box(center, scale)
-    cv2.imshow("warpAffine", img)
-    cv2.waitKey(0)
     # img = im_to_torch(img)
     img = np.transpose(img, (2, 0, 1))  # C*H*W
     img = img.astype(np.float32)
@@ -202,11 +200,11 @@ class PosePredictor:
                                                          device_type=self.device_type, device_id=self.device_id)
             heatmap = self.model.run(self.output_names, {self.input_name: x})[0]
             print(f"{self.device_type}inference time:", time.time() - t0)
-            for i in range(0, 17):
-                h1 = heatmap[0, i, :, :]
-                h_img = (h1 * 255).astype(np.uint8)
-                cv2.imwrite(f"{output_dir}/h{i}_img_resz.png", cv2.resize(h_img, (192, 256)))
-                cv2.imwrite(f"{output_dir}/h{i}_img.png", h_img)
+            # for i in range(0, 17):
+            #     h1 = heatmap[0, i, :, :]
+            #     h_img = (h1 * 255).astype(np.uint8)
+            #     cv2.imwrite(f"{output_dir}/h{i}_img_resz.png", cv2.resize(h_img, (192, 256)))
+            #     cv2.imwrite(f"{output_dir}/h{i}_img.png", h_img)
             print("heatmap shape", heatmap.shape)
             if is_flip:
                 heatmap = flip_heatmap(heatmap[int(len(heatmap) / 2):], shift=True)
@@ -220,15 +218,15 @@ class PosePredictor:
 if __name__ == '__main__':
     import sys, os
 
-    output_dir = "output"
+    output_dir = "outputs"
     os.makedirs(output_dir, exist_ok=True)
     np.set_printoptions(suppress=True,
                         precision=10,
                         threshold=sys.maxsize,
                         linewidth=150)
     is_flip = False
-    weights = r"./fastpose_ret50.onnx"
-    img: "ndarray" = cv2.imread("swote.png")  # 256 192 3
+    weights = r"weights/fastpose_ret50.onnx"
+    img: "ndarray" = cv2.imread("images/swote.png")  # 256 192 3
     m = PosePredictor(weights, "cuda:0")
     res = m.predict(img, [[57, 64, 201, 392]], ["ren"])
     # res = res["result"][0]["keypoints"].numpy().astype(np.int)
@@ -238,6 +236,5 @@ if __name__ == '__main__':
             print(i)
     if res is not None:
         plot_poses(img, res[2])
-    cv2.imshow("res", img)
-    cv2.waitKey()
+    cv2.imwrite("outputs/swote.jpg", img)
     cv2.destroyAllWindows()

@@ -27,7 +27,7 @@ def flip_heatmap(heatmap: "ndarray", shift=False):
         Heatmap of joints.
         List of joint pairs.
     shift : bool
-        Whether to shift the output.
+        Whether to shift the outputs.
     Returns
     -------
     numpy.ndarray
@@ -222,14 +222,14 @@ def predict(model, img, boxes, labels, fn=0):
 if __name__ == '__main__':
     import sys
 
-    output_dir = "output"
+    output_dir = "outputs"
     os.makedirs(output_dir, exist_ok=True)
     np.set_printoptions(suppress=True,
                         precision=10,
                         threshold=sys.maxsize,
                         linewidth=150)
     is_flip = False
-    img: "ndarray" = cv2.imread("person.jpg")  # 256 192 3
+    img: "ndarray" = cv2.imread("images/person.jpg")  # 256 192 3
     rknn = load_model("./alphapose.rknn", 0)
     res = predict(rknn, img, [[40, 13, 107, 255]], ["ren"])
     # res = res["result"][0]["keypoints"].numpy().astype(np.int)

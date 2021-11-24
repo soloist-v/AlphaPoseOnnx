@@ -493,7 +493,7 @@ def PCK_match(pick_pred, all_preds, ref_dist):
 def write_json(all_results, outputpath, form=None, for_eval=False):
     '''
     all_result: result dict of predictions
-    outputpath: output directory
+    outputpath: outputs directory
     '''
     json_results = []
     json_results_cmu = {}

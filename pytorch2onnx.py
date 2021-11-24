@@ -17,7 +17,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--weights", "-i", type=str, help="AlphaPose weights filepath")
     parser.add_argument("--onnx", "-o", type=str, default="", help="onnx save name")
-    parser.add_argument("--cfg", type=str, default="./256x192_res50_lr1e-3_1x.yaml", help="AlphaPose config")
+    parser.add_argument("--cfg", type=str, default="configs/256x192_res50_lr1e-3_1x.yaml", help="AlphaPose config")
     opt = parser.parse_args()
     if opt.onnx == "":
         base_name = os.path.splitext(opt.weights)[0]

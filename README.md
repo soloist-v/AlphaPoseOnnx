@@ -16,6 +16,8 @@
    模型推理: pythononnx_inference.py
    ```
 
-   
+   ![Image text](outputs/swote.jpg)
+
+
 
 

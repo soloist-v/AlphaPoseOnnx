@@ -496,7 +496,7 @@ def flip_heatmap(heatmap, joint_pairs, shift=False):
     joint_pairs : list
         List of joint pairs.
     shift : bool
-        Whether to shift the output.
+        Whether to shift the outputs.
     Returns
     -------
     numpy.ndarray
