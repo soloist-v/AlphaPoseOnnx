@@ -1,27 +1,40 @@
 import sys
 import os
 import argparse
-from rknn.api import RKNN
+import warnings
 
 
 def load_model(model_path, npu_id):
+    from rknn.api import RKNN
+    if isinstance(npu_id, str):
+        npu_id = int(npu_id)
     rknn = RKNN()
     devs = rknn.list_devices()
-    device_id_dict = {}
+    dev_id: str
+    src_devices = []
+    ts_devices = []
     for index, dev_id in enumerate(devs[-1]):
-        if dev_id[:2] != 'TS':
-            device_id_dict[0] = dev_id
-        if dev_id[:2] == 'TS':
-            device_id_dict[1] = dev_id
+        if dev_id.startswith("TS"):
+            ts_devices.append(dev_id)
+        else:
+            src_devices.append(dev_id)
+    all_devices = src_devices + ts_devices
+    if len(all_devices) == 1:
+        npu_id = 0
+        warnings.warn("当前只有1个npu设备，强制加载到设备0", UserWarning)
+    else:
+        assert npu_id < len(all_devices), "npu_id 超出设备数量索引值."
+    print("--> All devices: ", all_devices)
     print('-->loading model : ' + model_path)
     rknn.load_rknn(model_path)
-    print('--> Init runtime environment on: ' + device_id_dict[npu_id])
-    ret = rknn.init_runtime(device_id=device_id_dict[npu_id], rknn2precompile=True)
+    print('-->Init runtime environment on: ' + all_devices[npu_id])
+    ret = rknn.init_runtime(device_id=all_devices[npu_id] if len(all_devices) > 1 else None, rknn2precompile=True)
     if ret != 0:
         print('Init runtime environment failed')
         exit(ret)
     print('done')
     return rknn
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

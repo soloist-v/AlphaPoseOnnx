@@ -105,7 +105,7 @@ def get_keypoints(ren_indexes, boxes, hm_data: "Tensor", cropped_boxes, fn=0):
     return result
 
 
-def test_transform(src_img, bbox, input_size=(256, 192), aspect_ratio=192 / 256):
+def _transform(src_img, bbox, input_size=(256, 192), aspect_ratio=192 / 256):
     xmin, ymin, xmax, ymax = bbox
     center, scale = _box_to_center_scale(
         xmin, ymin, xmax - xmin, ymax - ymin, aspect_ratio)
@@ -162,7 +162,7 @@ def get_pose_boxes(img, pose, need_keypoints='all'):
 class PosePredictor:
     def __init__(self, model_path, device):
         self.model = onnxruntime.InferenceSession(model_path,
-                                                  providers=["CUDAExecutionProvider"])
+                                                  providers=["CUDAExecutionProvider", "CPUExecutionProvider"])
         input_names = self.model.get_inputs()
         output_names = self.model.get_outputs()
         self.output_names = [n.name for n in output_names]
@@ -192,7 +192,7 @@ class PosePredictor:
             cropped_boxes = torch.zeros(boxes.size()[0], 4)
             # 获得画面中的人的区域
             for i, box in enumerate(boxes):
-                _img, cropped_box = test_transform(img, box)
+                _img, cropped_box = _transform(img, box)
                 inps.append(_img)
                 cropped_boxes[i] = torch.FloatTensor(cropped_box)
             # hm为预测的关键点
@@ -207,11 +207,6 @@ class PosePredictor:
                 h_img = (h1 * 255).astype(np.uint8)
                 cv2.imwrite(f"{output_dir}/h{i}_img_resz.png", cv2.resize(h_img, (192, 256)))
                 cv2.imwrite(f"{output_dir}/h{i}_img.png", h_img)
-            # h1_f = h1.reshape(-1)
-            # print(h1_f[h1_f > 0.01])
-            # print(h1_f[505])
-            # print(h1.shape, h1_f.argmax(), h1.max())
-            # print("time:", time.time() - t0)
             print("heatmap shape", heatmap.shape)
             if is_flip:
                 heatmap = flip_heatmap(heatmap[int(len(heatmap) / 2):], shift=True)
