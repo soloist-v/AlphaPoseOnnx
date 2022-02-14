@@ -230,7 +230,7 @@ if __name__ == '__main__':
                         linewidth=150)
     is_flip = False
     img: "ndarray" = cv2.imread("images/person.jpg")  # 256 192 3
-    rknn = load_model("./alphapose.rknn", 0)
+    rknn = load_model("fastpose_res50.torchscript.rknn", 0)
     res = predict(rknn, img, [[40, 13, 107, 255]], ["ren"])
     # res = res["result"][0]["keypoints"].numpy().astype(np.int)
     # print("len:>>", len(res))

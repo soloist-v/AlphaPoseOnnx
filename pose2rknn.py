@@ -6,8 +6,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--onnx', type=str, required=True, help='weights path')
     parser.add_argument('--rknn', type=str, default='', help='保存路径')
-    parser.add_argument('--precompile', action="store_true", help='是否是预编译模型')
-    parser.add_argument("--div_255", action="store_true", help="input / 255")
     parser.add_argument('--batch-size', type=int, default=1, help='batch size')
     parser.add_argument('--dataset', type=str, default="./dataset.txt", help='dataset txt')
     parser.add_argument('--platform', type=str, default="rk3399pro", help='target platform')
