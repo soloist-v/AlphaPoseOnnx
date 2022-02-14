@@ -13,7 +13,8 @@
 
 
 3. ```
-   模型推理: pythononnx_inference.py
+   模型推理: python onnx_inference.py
+            python rknn_inference.py
    ```
 
    ![Image text](outputs/swote.jpg)
